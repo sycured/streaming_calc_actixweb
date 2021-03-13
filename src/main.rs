@@ -8,6 +8,7 @@ use env_logger::Env;
 mod bwserver;
 mod serverusagebw;
 mod index;
+mod tests;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -20,11 +21,9 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(Compress::default())
             .wrap(Logger::default())
-            .service(index::get)
-            .service(bwserver::get)
-            .service(bwserver::post)
-            .service(serverusagebw::get)
-            .service(serverusagebw::post)
+            .configure(index::init_routes)
+            .configure(bwserver::init_routes)
+            .configure(serverusagebw::init_routes)
     })
         .bind(format!("{}:{}", ip, port))?
         .run()

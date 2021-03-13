@@ -1,4 +1,4 @@
-use actix_web::{get, HttpResponse, Responder};
+use actix_web::{get, HttpResponse, Responder, web};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -22,4 +22,8 @@ pub async fn get() -> impl Responder {
         ],
         developer: "sycured".to_string(),
     })
+}
+
+pub fn init_routes(cfg: &mut web::ServiceConfig){
+    cfg.service(get);
 }

@@ -39,3 +39,9 @@ pub async fn post(data: web::Json<PostJson>) -> Result<HttpResponse> {
         result: 125.0 * data.nblisteners * data.bitrate / 128.0
     }))
 }
+
+pub fn init_routes(cfg: &mut web::ServiceConfig){
+    cfg.service(get);
+    cfg.service(post);
+
+}
