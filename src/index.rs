@@ -1,4 +1,4 @@
-use actix_web::{get, HttpResponse, Responder, web};
+use actix_web::{get, web, HttpResponse, Responder};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -16,14 +16,11 @@ pub async fn get() -> impl Responder {
         status: "ready".to_string(),
         app: "streaming_calc_actixweb".to_string(),
         method: "GET".to_string(),
-        endpoints: [
-            "/bwserver".to_string(),
-            "/serverusagebw".to_string()
-        ],
+        endpoints: ["/bwserver".to_string(), "/serverusagebw".to_string()],
         developer: "sycured".to_string(),
     })
 }
 
-pub fn init_routes(cfg: &mut web::ServiceConfig){
+pub fn init_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(get);
 }

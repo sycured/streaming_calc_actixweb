@@ -1,13 +1,13 @@
 use std::env;
 
-use actix_web::{App, HttpServer};
 use actix_web::middleware::Compress;
 use actix_web::middleware::Logger;
+use actix_web::{App, HttpServer};
 use env_logger::Env;
 
 mod bwserver;
-mod serverusagebw;
 mod index;
+mod serverusagebw;
 mod tests;
 
 #[actix_web::main]
@@ -25,7 +25,7 @@ async fn main() -> std::io::Result<()> {
             .configure(bwserver::init_routes)
             .configure(serverusagebw::init_routes)
     })
-        .bind(format!("{}:{}", ip, port))?
-        .run()
-        .await
+    .bind(format!("{}:{}", ip, port))?
+    .run()
+    .await
 }
