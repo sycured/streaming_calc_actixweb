@@ -1,6 +1,7 @@
-on: [push, pull_request]
-
-name: build
+name: CI
+on:
+  - push
+  - pull_request
 
 jobs:
   check:
