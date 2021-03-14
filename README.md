@@ -10,7 +10,7 @@ Bandwidth calculation for streaming server | Rewrite from my original in Python
 
 ### Run the server
 
-	./target/release/streaming_calc_actix
+	./target/release/streaming_calc_actixweb
 
 By defaut, it's listening on 127.0.0.1:8080 but it can be tuned via env var:
 

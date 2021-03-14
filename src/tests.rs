@@ -55,6 +55,12 @@ mod tests {
             "bitrate": 64
         });
 
+        let resp = TestRequest::get()
+            .uri("/bwserver")
+            .send_request(&mut app)
+            .await;
+        assert_eq!(resp.status().is_success(), true);
+
         let mut resp = TestRequest::post()
             .uri("/bwserver")
             .set_json(&request_body)
@@ -92,6 +98,12 @@ mod tests {
             "nbdays": 1,
             "nbhours": 24
         });
+
+        let resp = TestRequest::get()
+            .uri("/serverusagebw")
+            .send_request(&mut app)
+            .await;
+        assert_eq!(resp.status().is_success(), true);
 
         let mut resp = TestRequest::post()
             .uri("/serverusagebw")
