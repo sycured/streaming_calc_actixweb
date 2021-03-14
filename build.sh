@@ -1,7 +1,7 @@
 #!/bin/bash
 set -xe
 
-mkimg=$(buildah from oraclelinux:8-slim)
+mkimg=$(buildah from ubuntu:20.04)
 buildah config --author='sycured' "$mkimg"
 buildah config --label Name='streaming_calc_actixweb' "$mkimg"
 buildah config --env APP_IP=0.0.0.0 "$mkimg"
