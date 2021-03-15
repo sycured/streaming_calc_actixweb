@@ -1,24 +1,16 @@
 use actix_web::{get, web, HttpResponse, Responder};
-use serde::Serialize;
-
-#[derive(Serialize)]
-pub struct IndexJson {
-    status: String,
-    app: String,
-    method: String,
-    endpoints: [String; 2],
-    developer: String,
-}
+use serde_json::json;
 
 #[get("/")]
 pub async fn get() -> impl Responder {
-    HttpResponse::Ok().json(IndexJson {
-        status: "ready".to_string(),
-        app: "streaming_calc_actixweb".to_string(),
-        method: "GET".to_string(),
-        endpoints: ["/bwserver".to_string(), "/serverusagebw".to_string()],
-        developer: "sycured".to_string(),
-    })
+    let index_json = json!({
+        "status": "ready",
+            "app": "streaming_calc_actixweb",
+            "method": "GET",
+            "endpoints": ["/bwserver", "/serverusagebw"],
+            "developer": "sycured"
+    });
+    HttpResponse::Ok().json(index_json)
 }
 
 pub fn init_routes(cfg: &mut web::ServiceConfig) {

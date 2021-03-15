@@ -6,6 +6,7 @@ mod tests {
         test::{self, TestRequest},
         App,
     };
+    use serde_json::json;
 
     trait BodyTest {
         fn as_str(&self) -> &str;
@@ -50,7 +51,7 @@ mod tests {
     async fn bwserver() {
         let mut app = test::init_service(App::new().configure(bwserver::init_routes)).await;
 
-        let request_body = serde_json::json!({
+        let request_body = json!({
             "nblisteners": 250,
             "bitrate": 64
         });
@@ -92,7 +93,7 @@ mod tests {
     async fn serverusagebw() {
         let mut app = test::init_service(App::new().configure(serverusagebw::init_routes)).await;
 
-        let request_body = serde_json::json!({
+        let request_body = json!({
             "nblisteners": 250,
             "bitrate": 64,
             "nbdays": 1,
