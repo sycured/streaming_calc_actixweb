@@ -30,3 +30,20 @@ pub async fn compute(data: Json<SrvPost>) -> Result<Json<SrvResp>> {
 pub fn init_routes(cfg: &mut ServiceConfig) {
     cfg.service(resource("/serverusagebw").route(post().to(compute)));
 }
+
+#[cfg(test)]
+#[actix_rt::test]
+async fn serverusagebw() {
+    assert_eq!(
+        Json(SrvResp { result: 164794.92 }).result,
+        compute(Json(SrvPost {
+            nblisteners: 250.0,
+            bitrate: 64.0,
+            nbdays: 1.0,
+            nbhours: 24.0
+        }))
+        .await
+        .unwrap()
+        .result
+    )
+}

@@ -9,7 +9,7 @@ pub struct BwPost {
     bitrate: f32,
 }
 
-#[derive(Serialize, Apiv2Schema)]
+#[derive(Debug, Serialize, Apiv2Schema)]
 pub struct BwResp {
     result: f32,
 }
@@ -27,4 +27,19 @@ pub async fn compute(data: Json<BwPost>) -> Result<Json<BwResp>> {
 
 pub fn init_routes(cfg: &mut ServiceConfig) {
     cfg.service(resource("/bwserver").route(post().to(compute)));
+}
+
+#[cfg(test)]
+#[actix_rt::test]
+async fn bwserver() {
+    assert_eq!(
+        Json(BwResp { result: 15625.0 }).result,
+        compute(Json(BwPost {
+            nblisteners: 250.0,
+            bitrate: 64.0,
+        }))
+        .await
+        .unwrap()
+        .result
+    )
 }

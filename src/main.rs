@@ -8,7 +8,6 @@ use paperclip::actix::OpenApiExt;
 
 mod bwserver;
 mod serverusagebw;
-mod tests;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
