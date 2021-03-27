@@ -10,5 +10,6 @@ buildah config --port 8080 "$mkimg"
 buildah config --workingdir='/opt' "$mkimg"
 buildah config --cmd '/opt/streaming_calc_actixweb' "$mkimg"
 buildah copy "$mkimg" 'target/release/streaming_calc_actixweb' '/opt/streaming_calc_actixweb'
+buildah copy "$mkimg" 'static' '/opt/static/'
 buildah commit --squash "$mkimg" "scaw"
 buildah rm "$mkimg"
