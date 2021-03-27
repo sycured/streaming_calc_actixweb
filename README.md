@@ -2,6 +2,9 @@
 
 Bandwidth calculation for streaming server | Rewrite from my original in Python
 
+[![CI](https://github.com/sycured/streaming_calc_actixweb/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sycured/streaming_calc_actixweb/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/sycured/streaming_calc_actixweb/branch/main/graph/badge.svg)](https://codecov.io/gh/sycured/streaming_calc_actixweb)
+
 ## Compilation
 
     cargo build --release

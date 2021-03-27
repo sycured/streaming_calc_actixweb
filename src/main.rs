@@ -11,6 +11,7 @@ mod serverusagebw;
 mod trait_imp;
 
 #[actix_web::main]
+#[cfg(not(tarpaulin_include))]
 async fn main() -> std::io::Result<()> {
     let default_ip = "127.0.0.1".to_string();
     let default_port = "8080".to_string();

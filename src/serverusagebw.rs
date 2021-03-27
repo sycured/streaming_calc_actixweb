@@ -81,7 +81,7 @@ mod tests {
             .send_request(&mut app)
             .await;
         assert!(resp.status().is_success(), "Failed to post");
-        assert!(resp.take_body().as_str().contains(":164794.92"), true);
+        assert!(resp.take_body().as_str().contains(":164794.92"));
 
         let resp = TestRequest::delete()
             .uri("/serverusagebw")
