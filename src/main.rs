@@ -7,6 +7,7 @@ use env_logger::Env;
 use paperclip::actix::OpenApiExt;
 
 mod bwserver;
+mod redoc;
 mod serverusagebw;
 mod trait_imp;
 
@@ -26,8 +27,9 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::default())
             .configure(bwserver::init_routes)
             .configure(serverusagebw::init_routes)
-            .with_json_spec_at("/")
+            .with_json_spec_at("/openapi.json")
             .build()
+            .configure(redoc::init_routes)
     })
     .bind(format!("{}:{}", ip, port))?
     .run()
