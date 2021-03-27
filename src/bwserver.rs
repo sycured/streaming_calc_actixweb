@@ -30,16 +30,70 @@ pub fn init_routes(cfg: &mut ServiceConfig) {
 }
 
 #[cfg(test)]
-#[actix_rt::test]
-async fn bwserver() {
-    assert_eq!(
-        Json(BwResp { result: 15625.0 }).result,
-        compute(Json(BwPost {
-            nblisteners: 250.0,
-            bitrate: 64.0,
-        }))
-        .await
-        .unwrap()
-        .result
-    )
+mod tests {
+    use super::super::trait_imp::BodyTest;
+    use super::{compute, init_routes, BwPost, BwResp, Json};
+    use actix_web::{
+        test::{self, TestRequest},
+        App,
+    };
+    use paperclip::actix::OpenApiExt;
+    use serde_json::json;
+
+    #[actix_rt::test]
+    async fn function() {
+        assert_eq!(
+            Json(BwResp { result: 15625.0 }).result,
+            compute(Json(BwPost {
+                nblisteners: 250.0,
+                bitrate: 64.0,
+            }))
+            .await
+            .unwrap()
+            .result
+        )
+    }
+
+    #[actix_rt::test]
+    async fn via_app() {
+        let mut app =
+            test::init_service(App::new().wrap_api().configure(init_routes).build()).await;
+
+        let request_body = json!({
+            "nblisteners": 250,
+            "bitrate": 64
+        });
+
+        let resp = TestRequest::get()
+            .uri("/bwserver")
+            .send_request(&mut app)
+            .await;
+        assert_eq!(resp.status().is_success(), false);
+
+        let mut resp = TestRequest::post()
+            .uri("/bwserver")
+            .set_json(&request_body)
+            .send_request(&mut app)
+            .await;
+        assert!(resp.status().is_success(), "Failed to post");
+        assert!(resp.take_body().as_str().contains(":15625.0"), true);
+
+        let resp = TestRequest::delete()
+            .uri("/bwserver")
+            .send_request(&mut app)
+            .await;
+        assert_eq!(resp.status().is_success(), false);
+
+        let resp = TestRequest::patch()
+            .uri("/bwserver")
+            .send_request(&mut app)
+            .await;
+        assert_eq!(resp.status().is_success(), false);
+
+        let resp = TestRequest::put()
+            .uri("/bwserver")
+            .send_request(&mut app)
+            .await;
+        assert_eq!(resp.status().is_success(), false);
+    }
 }
