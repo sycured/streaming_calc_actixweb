@@ -36,7 +36,7 @@ mod tests {
     use super::super::trait_imp::BodyTest;
     use super::{compute, init_routes, Json, SrvPost, SrvResp};
     use actix_web::{
-        test::{self, TestRequest},
+        test::{init_service, TestRequest},
         App,
     };
     use paperclip::actix::OpenApiExt;
@@ -59,8 +59,7 @@ mod tests {
 
     #[actix_rt::test]
     async fn via_app() {
-        let mut app =
-            test::init_service(App::new().wrap_api().configure(init_routes).build()).await;
+        let mut app = init_service(App::new().wrap_api().configure(init_routes).build()).await;
 
         let request_body = json!({
             "nblisteners": 250,
@@ -69,36 +68,52 @@ mod tests {
             "nbhours": 24
         });
 
+        let bad_request_body = json!({
+            "nblisteners": 250,
+            "bitrate": 64,
+            "nbdays": "a",
+            "nbhours": 24
+        });
+
+        let resp_expected = json!({"result": 164794.92});
+
         let resp = TestRequest::get()
             .uri("/serverusagebw")
             .send_request(&mut app)
             .await;
-        assert_eq!(resp.status().is_success(), false);
+        assert_eq!(resp.status().as_u16(), 405);
 
         let mut resp = TestRequest::post()
             .uri("/serverusagebw")
             .set_json(&request_body)
             .send_request(&mut app)
             .await;
-        assert!(resp.status().is_success(), "Failed to post");
-        assert!(resp.take_body().as_str().contains(":164794.92"));
+        assert_eq!(resp.status().as_u16(), 200);
+        assert_eq!(resp.take_body().as_str(), resp_expected.to_string());
+
+        let resp = TestRequest::post()
+            .uri("/serverusagebw")
+            .set_json(&bad_request_body)
+            .send_request(&mut app)
+            .await;
+        assert_eq!(resp.status().as_u16(), 400);
 
         let resp = TestRequest::delete()
             .uri("/serverusagebw")
             .send_request(&mut app)
             .await;
-        assert_eq!(resp.status().is_success(), false);
+        assert_eq!(resp.status().as_u16(), 405);
 
         let resp = TestRequest::patch()
             .uri("/serverusagebw")
             .send_request(&mut app)
             .await;
-        assert_eq!(resp.status().is_success(), false);
+        assert_eq!(resp.status().as_u16(), 405);
 
         let resp = TestRequest::put()
             .uri("/serverusagebw")
             .send_request(&mut app)
             .await;
-        assert_eq!(resp.status().is_success(), false);
+        assert_eq!(resp.status().as_u16(), 405);
     }
 }
