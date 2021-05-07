@@ -25,7 +25,7 @@ pub async fn compute(data: Json<BwPost>) -> Result<Json<BwResp>> {
     }))
 }
 
-pub fn init_routes(cfg: &mut ServiceConfig) {
+pub fn init_routes(cfg: &mut ServiceConfig<'_>) {
     cfg.service(resource("/bwserver").route(post().to(compute)));
 }
 
