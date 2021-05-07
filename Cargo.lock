@@ -1640,6 +1640,7 @@ dependencies = [
  "actix-rt 2.1.0",
  "actix-web",
  "env_logger",
+ "log",
  "paperclip",
  "serde",
  "serde_json",
