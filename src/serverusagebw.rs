@@ -1,6 +1,9 @@
 use actix_web::Result;
-use paperclip::actix::web::{post, resource, Json, ServiceConfig};
-use paperclip::actix::{api_v2_operation, Apiv2Schema};
+use paperclip::actix::{
+    api_v2_operation,
+    web::{post, resource, Json, ServiceConfig},
+    Apiv2Schema,
+};
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Apiv2Schema)]
@@ -33,14 +36,14 @@ pub fn init_routes(cfg: &mut ServiceConfig<'_>) {
 
 #[cfg(test)]
 mod tests {
-    use super::super::trait_imp::BodyTest;
-    use super::{compute, init_routes, Json, SrvPost, SrvResp};
+    use super::{super::trait_imp::BodyTest, compute, init_routes, Json, SrvPost, SrvResp};
     use actix_web::{
         test::{init_service, TestRequest},
         App,
     };
     use paperclip::actix::OpenApiExt;
     use serde_json::json;
+
     #[actix_rt::test]
     async fn function() {
         assert_eq!(

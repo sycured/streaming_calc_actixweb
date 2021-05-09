@@ -1,6 +1,8 @@
 use actix_files::NamedFile;
-use actix_web::web::{get, resource, HttpRequest, ServiceConfig};
-use actix_web::Result;
+use actix_web::{
+    web::{get, resource, HttpRequest, ServiceConfig},
+    Result,
+};
 use std::path::PathBuf;
 
 async fn serve_redoc(_req: HttpRequest) -> Result<NamedFile> {
