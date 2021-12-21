@@ -3,7 +3,7 @@ set -xe
 
 mkimg=$(buildah from ubuntu:20.04)
 buildah config --author='sycured' "$mkimg"
-buildah config --label Name='streaming_calc_actixweb' "$mkimg"
+buildah config --label Name='streaming_calc_actixweb' --label org.opencontainers.image.source="https://github.com/sycured/streaming_calc_actixweb" "$mkimg"
 buildah config --env APP_IP=0.0.0.0 "$mkimg"
 buildah config --env APP_PORT=8080 "$mkimg"
 buildah config --port 8080 "$mkimg"
