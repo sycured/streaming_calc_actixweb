@@ -8,6 +8,9 @@ on:
     branches:
       - main
 
+env:
+  RUSTFLAGS: "-C target-feature=+crt-static"
+
 jobs:
   buildah:
     runs-on: ubuntu-20.04
@@ -38,10 +41,10 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --release
+          args: --release --target x86_64-unknown-linux-gnu
 
       - name: Strip binary
-        run: strip -p --strip-unneeded --remove-section=.comment target/release/streaming_calc_actixweb
+        run: strip -p --strip-unneeded --remove-section=.comment target/x86_64-unknown-linux-gnu/release/streaming_calc_actixweb
 
       - name: Registry - Login
         env:
