@@ -1,5 +1,10 @@
 name: Coverage
-on: push
+on:
+  workflow_run:
+    workflows:
+      - CI
+    types:
+      - completed
 
 jobs:
   coverage:
@@ -15,6 +20,11 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+
+      - uses: Swatinem/rust-cache@v1
+        with:
+          sharedKey: scaw
+          cache-on-failure: true
 
       - name: Install tarpaulin
         uses: actions-rs/cargo@v1

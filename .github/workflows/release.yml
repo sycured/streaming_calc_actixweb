@@ -37,6 +37,11 @@ jobs:
           toolchain: stable
           override: true
 
+      - uses: Swatinem/rust-cache@v1
+        with:
+          sharedKey: scaw
+          cache-on-failure: true
+
       - name: Build for production
         uses: actions-rs/cargo@v1
         with:
