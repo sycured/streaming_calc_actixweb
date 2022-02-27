@@ -4,14 +4,13 @@ use actix_web::{
 };
 
 use env_logger::Env;
-use paperclip::actix::OpenApiExt;
 
 mod configuration;
 use configuration::{app_ip, app_port};
 
 mod bwserver;
+mod index;
 mod serverusagebw;
-mod trait_imp;
 
 #[actix_web::main]
 #[cfg(not(tarpaulin_include))]
@@ -19,13 +18,11 @@ async fn main() -> std::io::Result<()> {
     env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
     HttpServer::new(|| {
         App::new()
-            .wrap_api()
             .wrap(Compress::default())
             .wrap(Logger::default())
+            .configure(index::init_routes)
             .configure(bwserver::init_routes)
             .configure(serverusagebw::init_routes)
-            .with_json_spec_at("/openapi.json")
-            .build()
     })
     .bind(format!(
         "{ip}:{port}",
@@ -35,3 +32,6 @@ async fn main() -> std::io::Result<()> {
     .run()
     .await
 }
+
+#[cfg(test)]
+mod trait_imp;

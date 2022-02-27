@@ -1,34 +1,27 @@
-use actix_web::Result;
-use paperclip::actix::{
-    api_v2_operation,
+use actix_web::{
     web::{post, resource, Json, ServiceConfig},
-    Apiv2Schema,
+    Result,
 };
 use serde::{Deserialize, Serialize};
 
-#[derive(Deserialize, Apiv2Schema)]
+#[derive(Deserialize)]
 pub struct BwPost {
     nblisteners: f32,
     bitrate: f32,
 }
 
-#[derive(Debug, Serialize, Apiv2Schema)]
+#[derive(Debug, Serialize)]
 pub struct BwResp {
     result: f32,
 }
 
-#[api_v2_operation(
-    description = "Determine necessary server bandwidth (MiB/s)",
-    consumes = "application/json",
-    produces = "application/json"
-)]
 pub async fn compute(data: Json<BwPost>) -> Result<Json<BwResp>> {
     Ok(Json(BwResp {
         result: 125.0 * data.nblisteners * data.bitrate / 128.0,
     }))
 }
 
-pub fn init_routes(cfg: &mut ServiceConfig<'_>) {
+pub fn init_routes(cfg: &mut ServiceConfig) {
     cfg.service(resource("/bwserver").route(post().to(compute)));
 }
 
@@ -36,14 +29,16 @@ pub fn init_routes(cfg: &mut ServiceConfig<'_>) {
 mod tests {
     use super::{super::trait_imp::BodyTest, compute, init_routes, BwPost, BwResp, Json};
     use actix_web::{
+        body::to_bytes,
+        dev::Service,
+        http::StatusCode,
         test::{init_service, TestRequest},
         App,
     };
-    use paperclip::actix::OpenApiExt;
     use serde_json::json;
 
-    #[actix_rt::test]
-    async fn function() {
+    #[actix_web::test]
+    async fn test_function() {
         assert_eq!(
             Json(BwResp { result: 15625.0 }).result,
             compute(Json(BwPost {
@@ -56,59 +51,78 @@ mod tests {
         )
     }
 
-    #[actix_rt::test]
-    async fn via_app() {
-        let mut app = init_service(App::new().wrap_api().configure(init_routes).build()).await;
+    #[actix_web::test]
+    async fn test_get() {
+        let app = init_service(App::new().configure(init_routes)).await;
+        let req = TestRequest::get().uri("/bwserver").to_request();
+        let resp = app.call(req).await.unwrap();
+        assert_eq!(resp.status(), StatusCode::METHOD_NOT_ALLOWED);
+    }
 
-        let request_body = json!({
+    #[actix_web::test]
+    async fn test_delete() {
+        let app = init_service(App::new().configure(init_routes)).await;
+        let req = TestRequest::delete().uri("/bwserver").to_request();
+        let resp = app.call(req).await.unwrap();
+        assert_eq!(resp.status(), StatusCode::METHOD_NOT_ALLOWED);
+    }
+
+    #[actix_web::test]
+    async fn test_patch() {
+        let app = init_service(App::new().configure(init_routes)).await;
+        let req = TestRequest::patch().uri("/bwserver").to_request();
+        let resp = app.call(req).await.unwrap();
+        assert_eq!(resp.status(), StatusCode::METHOD_NOT_ALLOWED);
+    }
+
+    #[actix_web::test]
+    async fn test_put() {
+        let app = init_service(App::new().configure(init_routes)).await;
+        let req = TestRequest::put().uri("/bwserver").to_request();
+        let resp = app.call(req).await.unwrap();
+        assert_eq!(resp.status(), StatusCode::METHOD_NOT_ALLOWED);
+    }
+
+    #[actix_web::test]
+    async fn test_post_1() {
+        let req_body = json!({
             "nblisteners": 250,
             "bitrate": 64
         });
 
-        let bad_request_body = json!({
-        "nblisteners": 250,
-        "bitrate": "a"
+        let resp_expected = json!({
+            "result": 15625.0
         });
 
-        let resp_expected = json!({"result": 15625.0 });
+        let app = init_service(App::new().configure(init_routes)).await;
 
-        let resp = TestRequest::get()
+        let req = TestRequest::post()
             .uri("/bwserver")
-            .send_request(&mut app)
-            .await;
-        assert_eq!(resp.status().as_u16(), 405);
+            .set_json(&req_body)
+            .to_request();
+        let resp = app.call(req).await.unwrap();
 
-        let mut resp = TestRequest::post()
-            .uri("/bwserver")
-            .set_json(&request_body)
-            .send_request(&mut app)
-            .await;
-        assert_eq!(resp.status().as_u16(), 200);
-        assert_eq!(resp.take_body().as_str(), resp_expected.to_string());
+        assert_eq!(
+            to_bytes(resp.into_body()).await.unwrap().as_str(),
+            resp_expected.to_string()
+        );
+    }
 
-        let resp = TestRequest::post()
-            .uri("/bwserver")
-            .set_json(&bad_request_body)
-            .send_request(&mut app)
-            .await;
-        assert_eq!(resp.status().as_u16(), 400);
+    #[actix_web::test]
+    async fn test_post_2() {
+        let req_body = json!({
+            "nblisteners": 250,
+            "bitrate": "a"
+        });
 
-        let resp = TestRequest::delete()
-            .uri("/bwserver")
-            .send_request(&mut app)
-            .await;
-        assert_eq!(resp.status().as_u16(), 405);
+        let app = init_service(App::new().configure(init_routes)).await;
 
-        let resp = TestRequest::patch()
+        let req = TestRequest::post()
             .uri("/bwserver")
-            .send_request(&mut app)
-            .await;
-        assert_eq!(resp.status().as_u16(), 405);
+            .set_json(&req_body)
+            .to_request();
+        let resp = app.call(req).await.unwrap();
 
-        let resp = TestRequest::put()
-            .uri("/bwserver")
-            .send_request(&mut app)
-            .await;
-        assert_eq!(resp.status().as_u16(), 405);
+        assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
     }
 }

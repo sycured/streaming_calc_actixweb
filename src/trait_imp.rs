@@ -1,20 +1,12 @@
-use actix_web::body::{Body, ResponseBody};
+use actix_web::web::Bytes;
+use std::str::from_utf8;
 
 pub trait BodyTest {
     fn as_str(&self) -> &str;
 }
 
-impl BodyTest for ResponseBody<Body> {
+impl BodyTest for Bytes {
     fn as_str(&self) -> &str {
-        match self {
-            ResponseBody::Body(ref b) => match b {
-                Body::Bytes(ref by) => std::str::from_utf8(by).unwrap(),
-                _ => panic!(),
-            },
-            ResponseBody::Other(ref b) => match b {
-                Body::Bytes(ref by) => std::str::from_utf8(by).unwrap(),
-                _ => panic!(),
-            },
-        }
+        from_utf8(self).unwrap()
     }
 }
