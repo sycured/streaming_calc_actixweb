@@ -27,6 +27,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: check
+          args: --release
 
   test:
     name: Test Suite
@@ -53,6 +54,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: test
+          args: --release
 
   lints:
     name: Lints
@@ -86,4 +88,4 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: -- -D warnings
+          args: --release -- -D warnings
