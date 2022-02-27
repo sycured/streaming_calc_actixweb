@@ -9,6 +9,5 @@ buildah config --env APP_PORT=8080 "$mkimg"
 buildah config --port 8080 "$mkimg"
 buildah config --cmd '/streaming_calc_actixweb' "$mkimg"
 buildah copy "$mkimg" 'target/x86_64-unknown-linux-gnu/release/streaming_calc_actixweb' '/streaming_calc_actixweb'
-buildah copy "$mkimg" 'static' '/static/'
 buildah commit --squash "$mkimg" "scaw"
 buildah rm "$mkimg"
