@@ -36,7 +36,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: tarpaulin
-          args: --verbose --release --all-features --workspace --timeout 480 --out Xml
+          args: --verbose --all-features --frozen --workspace --timeout 480 --out Xml
 
       - name: Upload to codecov.io
         uses: codecov/codecov-action@v1
