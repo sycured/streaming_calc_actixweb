@@ -1,3 +1,4 @@
+use actix_cors::Cors;
 use actix_web::{
     middleware::{Compress, Logger},
     App, HttpServer,
@@ -17,9 +18,14 @@ mod serverusagebw;
 async fn main() -> std::io::Result<()> {
     env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
     HttpServer::new(|| {
+        let cors = Cors::default()
+            .allowed_origin("https://schy.sycured.com")
+            .allowed_methods(vec!["GET", "POST"])
+            .max_age(3600);
         App::new()
             .wrap(Compress::default())
             .wrap(Logger::default())
+            .wrap(cors)
             .configure(index::init_routes)
             .configure(bwserver::init_routes)
             .configure(serverusagebw::init_routes)
