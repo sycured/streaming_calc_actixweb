@@ -1,5 +1,6 @@
-use actix_web::web::Bytes;
 use std::str::from_utf8;
+
+use actix_web::web::Bytes;
 
 pub trait BodyTest {
     fn as_str(&self) -> &str;

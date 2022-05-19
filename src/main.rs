@@ -1,17 +1,18 @@
 use actix_cors::Cors;
 use actix_web::{
-    middleware::{Compress, Logger},
-    App, HttpServer,
+    App,
+    HttpServer, middleware::{Compress, Logger},
 };
-
 use env_logger::Env;
 
-mod configuration;
 use configuration::{app_ip, app_port};
+
+mod configuration;
 
 mod bwserver;
 mod index;
 mod serverusagebw;
+mod util;
 
 #[actix_web::main]
 #[cfg(not(tarpaulin_include))]
@@ -30,13 +31,13 @@ async fn main() -> std::io::Result<()> {
             .configure(bwserver::init_routes)
             .configure(serverusagebw::init_routes)
     })
-    .bind(format!(
-        "{ip}:{port}",
-        ip = app_ip().await,
-        port = app_port().await
-    ))?
-    .run()
-    .await
+        .bind(format!(
+            "{ip}:{port}",
+            ip = app_ip().await,
+            port = app_port().await
+        ))?
+        .run()
+        .await
 }
 
 #[cfg(test)]

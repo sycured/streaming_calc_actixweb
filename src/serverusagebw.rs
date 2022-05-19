@@ -1,8 +1,11 @@
 use actix_web::{
-    web::{post, resource, Json, ServiceConfig},
-    Result,
+    HttpRequest,
+    HttpResponse, web::{Json, post, resource, ServiceConfig},
 };
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
+use serde_json::{json, Value};
+
+use super::util::{get_x_request_id_header, return_response_json};
 
 #[derive(Deserialize)]
 pub struct SrvPost {
@@ -12,15 +15,11 @@ pub struct SrvPost {
     nbhours: f32,
 }
 
-#[derive(Debug, Serialize)]
-pub struct SrvResp {
-    result: f32,
-}
-
-pub async fn compute(data: Json<SrvPost>) -> Result<Json<SrvResp>> {
-    Ok(Json(SrvResp {
-        result: 28125.0 * data.nbdays * data.nbhours * data.bitrate * data.nblisteners / 65536.0,
-    }))
+pub async fn compute(req: HttpRequest, data: Json<SrvPost>) -> HttpResponse {
+    let payload: Value = json!({
+        "result": 28125.0 * data.nbdays * data.nbhours * data.bitrate * data.nblisteners / 65536.0,
+    });
+    return_response_json(payload, get_x_request_id_header(&req))
 }
 
 pub fn init_routes(cfg: &mut ServiceConfig) {
@@ -29,15 +28,16 @@ pub fn init_routes(cfg: &mut ServiceConfig) {
 
 #[cfg(test)]
 mod tests {
-    use super::{super::trait_imp::BodyTest, compute, init_routes, Json, SrvPost, SrvResp};
     use actix_web::{
+        App,
         body::to_bytes,
         dev::Service,
         http::StatusCode,
         test::{init_service, TestRequest},
-        App,
     };
     use serde_json::json;
+
+    use super::{compute, init_routes, Json, SrvPost, SrvResp, super::trait_imp::BodyTest};
 
     #[actix_web::test]
     async fn test_function() {
@@ -47,11 +47,11 @@ mod tests {
                 nblisteners: 250.0,
                 bitrate: 64.0,
                 nbdays: 1.0,
-                nbhours: 24.0
+                nbhours: 24.0,
             }))
-            .await
-            .unwrap()
-            .result
+                .await
+                .unwrap()
+                .result
         )
     }
 

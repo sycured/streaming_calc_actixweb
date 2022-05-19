@@ -1,5 +1,6 @@
-use log::warn;
 use std::env::var;
+
+use log::warn;
 
 pub async fn get_from_env_or_default(env_name: &str, default: String) -> String {
     var(env_name).unwrap_or_else(|_| {

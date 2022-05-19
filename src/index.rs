@@ -1,10 +1,12 @@
 use actix_web::{
-    web::{get, resource, ServiceConfig},
-    HttpResponse,
+    HttpRequest,
+    HttpResponse, web::{get, resource, ServiceConfig},
 };
 
-async fn index() -> HttpResponse {
-    HttpResponse::Ok().body("streaming_calc_actixweb")
+use super::util::{get_x_request_id_header, return_response_plain};
+
+async fn index(req: HttpRequest) -> HttpResponse {
+    return_response_plain("streaming_calc_actixweb", get_x_request_id_header(&req))
 }
 
 pub fn init_routes(cfg: &mut ServiceConfig) {
@@ -13,15 +15,16 @@ pub fn init_routes(cfg: &mut ServiceConfig) {
 
 #[cfg(test)]
 mod tests {
-    use super::super::trait_imp::BodyTest;
-    use super::*;
     use actix_web::{
+        App,
         body::to_bytes,
         dev::Service,
         http::StatusCode,
         test::{init_service, TestRequest},
-        App,
     };
+
+    use super::*;
+    use super::super::trait_imp::BodyTest;
 
     #[actix_web::test]
     async fn test_function() {
@@ -47,6 +50,7 @@ mod tests {
         let resp = app.call(req).await.unwrap();
         assert_eq!(resp.status(), StatusCode::METHOD_NOT_ALLOWED);
     }
+
     #[actix_web::test]
     async fn test_delete() {
         let app = init_service(App::new().configure(init_routes)).await;
@@ -54,6 +58,7 @@ mod tests {
         let resp = app.call(req).await.unwrap();
         assert_eq!(resp.status(), StatusCode::METHOD_NOT_ALLOWED);
     }
+
     #[actix_web::test]
     async fn test_put() {
         let app = init_service(App::new().configure(init_routes)).await;
@@ -61,6 +66,7 @@ mod tests {
         let resp = app.call(req).await.unwrap();
         assert_eq!(resp.status(), StatusCode::METHOD_NOT_ALLOWED);
     }
+
     #[actix_web::test]
     async fn test_patch() {
         let app = init_service(App::new().configure(init_routes)).await;
