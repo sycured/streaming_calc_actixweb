@@ -1,6 +1,6 @@
 use actix_web::{
-    HttpRequest,
-    HttpResponse, web::{get, resource, ServiceConfig},
+    web::{get, resource, ServiceConfig},
+    HttpRequest, HttpResponse,
 };
 
 use super::util::{get_x_request_id_header, return_response_plain};
@@ -16,15 +16,15 @@ pub fn init_routes(cfg: &mut ServiceConfig) {
 #[cfg(test)]
 mod tests {
     use actix_web::{
-        App,
         body::to_bytes,
         dev::Service,
         http::StatusCode,
         test::{init_service, TestRequest},
+        App,
     };
 
-    use super::*;
     use super::super::trait_imp::BodyTest;
+    use super::*;
 
     #[actix_web::test]
     async fn test_function() {

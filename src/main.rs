@@ -1,7 +1,7 @@
 use actix_cors::Cors;
 use actix_web::{
-    App,
-    HttpServer, middleware::{Compress, Logger},
+    middleware::{Compress, Logger},
+    App, HttpServer,
 };
 use env_logger::Env;
 
@@ -31,13 +31,13 @@ async fn main() -> std::io::Result<()> {
             .configure(bwserver::init_routes)
             .configure(serverusagebw::init_routes)
     })
-        .bind(format!(
-            "{ip}:{port}",
-            ip = app_ip().await,
-            port = app_port().await
-        ))?
-        .run()
-        .await
+    .bind(format!(
+        "{ip}:{port}",
+        ip = app_ip().await,
+        port = app_port().await
+    ))?
+    .run()
+    .await
 }
 
 #[cfg(test)]

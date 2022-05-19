@@ -1,6 +1,6 @@
 use actix_web::{
-    HttpRequest,
-    HttpResponse, web::{Json, post, resource, ServiceConfig},
+    web::{post, resource, Json, ServiceConfig},
+    HttpRequest, HttpResponse,
 };
 use serde::Deserialize;
 use serde_json::{json, Value};
@@ -27,15 +27,15 @@ pub fn init_routes(cfg: &mut ServiceConfig) {
 #[cfg(test)]
 mod tests {
     use actix_web::{
-        App,
         body::to_bytes,
         dev::Service,
         http::StatusCode,
         test::{init_service, TestRequest},
+        App,
     };
     use serde_json::json;
 
-    use super::{BwPost, BwResp, compute, init_routes, Json, super::trait_imp::BodyTest};
+    use super::{super::trait_imp::BodyTest, compute, init_routes, BwPost, BwResp, Json};
 
     #[actix_web::test]
     async fn test_function() {
@@ -45,9 +45,9 @@ mod tests {
                 nblisteners: 250.0,
                 bitrate: 64.0,
             }))
-                .await
-                .unwrap()
-                .result
+            .await
+            .unwrap()
+            .result
         )
     }
 
