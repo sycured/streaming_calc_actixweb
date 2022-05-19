@@ -33,22 +33,14 @@ mod tests {
         test::{init_service, TestRequest},
         App,
     };
+    use serde::Serialize;
     use serde_json::json;
 
-    use super::{super::trait_imp::BodyTest, compute, init_routes, BwPost, BwResp, Json};
+    use super::{super::trait_imp::BodyTest, init_routes};
 
-    #[actix_web::test]
-    async fn test_function() {
-        assert_eq!(
-            Json(BwResp { result: 15625.0 }).result,
-            compute(Json(BwPost {
-                nblisteners: 250.0,
-                bitrate: 64.0,
-            }))
-            .await
-            .unwrap()
-            .result
-        )
+    #[derive(Debug, Serialize)]
+    pub struct BwResp {
+        result: f32,
     }
 
     #[actix_web::test]

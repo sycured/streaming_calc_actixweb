@@ -35,24 +35,14 @@ mod tests {
         test::{init_service, TestRequest},
         App,
     };
+    use serde::Serialize;
     use serde_json::json;
 
-    use super::{super::trait_imp::BodyTest, compute, init_routes, Json, SrvPost, SrvResp};
+    use super::{super::trait_imp::BodyTest, init_routes};
 
-    #[actix_web::test]
-    async fn test_function() {
-        assert_eq!(
-            Json(SrvResp { result: 164794.92 }).result,
-            compute(Json(SrvPost {
-                nblisteners: 250.0,
-                bitrate: 64.0,
-                nbdays: 1.0,
-                nbhours: 24.0,
-            }))
-            .await
-            .unwrap()
-            .result
-        )
+    #[derive(Debug, Serialize)]
+    pub struct SrvResp {
+        result: f32,
     }
 
     #[actix_web::test]
@@ -97,7 +87,7 @@ mod tests {
         });
 
         let resp_expected = json!({
-            "result": 164794.92
+            "result": 164794.921875
         });
 
         let app = init_service(App::new().configure(init_routes)).await;

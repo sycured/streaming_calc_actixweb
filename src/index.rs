@@ -16,24 +16,13 @@ pub fn init_routes(cfg: &mut ServiceConfig) {
 #[cfg(test)]
 mod tests {
     use actix_web::{
-        body::to_bytes,
         dev::Service,
         http::StatusCode,
         test::{init_service, TestRequest},
         App,
     };
 
-    use super::super::trait_imp::BodyTest;
     use super::*;
-
-    #[actix_web::test]
-    async fn test_function() {
-        assert_eq!(index().await.status(), StatusCode::OK);
-        assert_eq!(
-            to_bytes(index().await.into_body()).await.unwrap().as_str(),
-            "streaming_calc_actixweb".to_string()
-        );
-    }
 
     #[actix_web::test]
     async fn test_get() {
