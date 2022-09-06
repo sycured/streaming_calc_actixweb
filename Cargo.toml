@@ -15,7 +15,11 @@ log = "0.4.17"
 serde = { version = "1.0.144", features = ["derive"] }
 serde_json = "1.0.85"
 
+[target.'cfg(not(target_env = "msvc"))'.dependencies]
+jemallocator = "0.5.0"
+
 [profile.release]
+codegen-units = 1
 lto = true
 strip = true
 
