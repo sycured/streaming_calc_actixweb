@@ -50,20 +50,15 @@ jobs:
 
       - name: Registry - Login
         env:
-          githubtoken: ${{ secrets.GITHUBTOKEN }}
+          dockerhubpat: ${{ secrets.DOCKERHUB_PAT }}
         run: |
-          echo "$githubtoken" | sudo buildah login -u sycured --password-stdin ghcr.io
+          echo "$dockerhubpat" | sudo buildah login -u sycured --password-stdin docker.io
 
       - name: Build
         run: sudo ./build.sh
 
       - name: Push to registry
-        run: sudo buildah push scaw:latest docker://ghcr.io/sycured/scaw:latest
+        run: sudo buildah push scaw:latest docker://docker.io/sycured/scaw:latest
 
       - name: Registry - Logout
-        run: sudo buildah logout ghcr.io
-
-      - uses: actions/delete-package-versions@v3
-        with:
-          package-name: 'scaw'
-          min-versions-to-keep: 2
+        run: sudo buildah logout docker.io
