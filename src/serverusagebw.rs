@@ -87,7 +87,7 @@ mod tests {
         });
 
         let resp_expected = json!({
-            "result": 164794.921875
+            "result": 164_794.921_875
         });
 
         let app = init_service(App::new().configure(init_routes)).await;
