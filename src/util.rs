@@ -1,4 +1,7 @@
-use actix_web::{HttpRequest, HttpResponse};
+use actix_web::{
+    http::header::{HeaderName, HeaderValue},
+    HttpRequest, HttpResponse,
+};
 use serde_json::Value;
 
 pub fn get_x_request_id_header(req: &HttpRequest) -> Option<&str> {
@@ -6,19 +9,25 @@ pub fn get_x_request_id_header(req: &HttpRequest) -> Option<&str> {
 }
 
 pub fn return_response_json(payload: Value, x_request_id: Option<&str>) -> HttpResponse {
-    let mut response = HttpResponse::Ok();
-    response.insert_header(("content-type", "application/json"));
+    let mut response = HttpResponse::Ok().json(payload);
     if let Some(x_request_id) = x_request_id {
-        response.insert_header(("x-request-id", x_request_id));
+        response.headers_mut().insert(
+            HeaderName::from_static("x-request-id"),
+            HeaderValue::from_str(x_request_id).unwrap(),
+        );
     }
-    response.json(payload)
+    response
 }
 
 pub fn return_response_plain(body: &'static str, x_request_id: Option<&str>) -> HttpResponse {
-    let mut response = HttpResponse::Ok();
-    response.insert_header(("content-type", "text/plain"));
+    let mut response = HttpResponse::Ok()
+        .append_header(("content-type", "text/plain"))
+        .body(body);
     if let Some(x_request_id) = x_request_id {
-        response.insert_header(("x-request-id", x_request_id));
+        response.headers_mut().insert(
+            HeaderName::from_static("x-request-id"),
+            HeaderValue::from_str(x_request_id).unwrap(),
+        );
     }
-    response.body(body)
+    response
 }
