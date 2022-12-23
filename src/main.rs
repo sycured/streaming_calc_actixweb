@@ -5,35 +5,33 @@ use jemallocator::Jemalloc;
 #[global_allocator]
 static GLOBAL: Jemalloc = Jemalloc;
 
-use actix_cors::Cors;
+use actix_request_identifier::RequestIdentifier;
 use actix_web::{
     middleware::{Compress, Logger},
     App, HttpServer,
 };
 use env_logger::Env;
 
-use configuration::{app_ip, app_port};
+use configuration::{app_ip, app_port, cors};
 
 mod configuration;
 
 mod bwserver;
 mod index;
 mod serverusagebw;
-mod util;
 
 #[actix_web::main]
 #[cfg(not(tarpaulin_include))]
 async fn main() -> std::io::Result<()> {
     env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
     HttpServer::new(|| {
-        let cors = Cors::default()
-            .allowed_origin("https://schy.sycured.com")
-            .allowed_methods(vec!["GET", "POST"])
-            .max_age(3600);
         App::new()
             .wrap(Compress::default())
-            .wrap(Logger::default())
-            .wrap(cors)
+            .wrap(cors())
+            .wrap(RequestIdentifier::with_uuid())
+            .wrap(Logger::new(
+                r#" %a %t "%r" %s %b "%{Referer}i" "%{User-Agent}i" "%{x-request-id}o" %T"#,
+            ))
             .configure(index::init_routes)
             .configure(bwserver::init_routes)
             .configure(serverusagebw::init_routes)
@@ -46,6 +44,3 @@ async fn main() -> std::io::Result<()> {
     .run()
     .await
 }
-
-#[cfg(test)]
-mod trait_imp;

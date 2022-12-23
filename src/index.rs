@@ -1,12 +1,10 @@
 use actix_web::{
     web::{get, resource, ServiceConfig},
-    HttpRequest, HttpResponse,
+    HttpResponse,
 };
 
-use super::util::{get_x_request_id_header, return_response_plain};
-
-async fn index(req: HttpRequest) -> HttpResponse {
-    return_response_plain("streaming_calc_actixweb", get_x_request_id_header(&req))
+async fn index() -> HttpResponse {
+    HttpResponse::Ok().body("streaming_calc_actixweb")
 }
 
 pub fn init_routes(cfg: &mut ServiceConfig) {
@@ -18,7 +16,8 @@ mod tests {
     use actix_web::{
         dev::Service,
         http::StatusCode,
-        test::{init_service, TestRequest},
+        test::{call_and_read_body, init_service, TestRequest},
+        web::Bytes,
         App,
     };
 
@@ -28,8 +27,8 @@ mod tests {
     async fn test_get() {
         let app = init_service(App::new().configure(init_routes)).await;
         let req = TestRequest::get().uri("/").to_request();
-        let resp = app.call(req).await.unwrap();
-        assert_eq!(resp.status(), StatusCode::OK);
+        let resp = call_and_read_body(&app, req).await;
+        assert_eq!(resp, Bytes::from_static(b"streaming_calc_actixweb"));
     }
 
     #[actix_web::test]

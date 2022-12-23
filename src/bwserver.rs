@@ -1,23 +1,24 @@
 use actix_web::{
     web::{post, resource, Json, ServiceConfig},
-    HttpRequest, HttpResponse,
+    Responder, Result,
 };
-use serde::Deserialize;
-use serde_json::{json, Value};
-
-use super::util::{get_x_request_id_header, return_response_json};
-
+use serde::{Deserialize, Serialize};
 #[derive(Deserialize)]
 pub struct BwPost {
     nblisteners: f32,
     bitrate: f32,
 }
 
-pub async fn compute(req: HttpRequest, data: Json<BwPost>) -> HttpResponse {
-    let payload: Value = json!({
-        "result": 125.0 * data.nblisteners * data.bitrate / 128.0,
-    });
-    return_response_json(payload, get_x_request_id_header(&req))
+#[derive(Serialize, Deserialize)]
+pub struct Resp {
+    result: f32,
+}
+
+pub async fn compute(data: Json<BwPost>) -> Result<impl Responder> {
+    let resp = Resp {
+        result: 125.0 * data.nblisteners * data.bitrate / 128.0,
+    };
+    Ok(Json(resp))
 }
 
 pub fn init_routes(cfg: &mut ServiceConfig) {
@@ -27,21 +28,14 @@ pub fn init_routes(cfg: &mut ServiceConfig) {
 #[cfg(test)]
 mod tests {
     use actix_web::{
-        body::to_bytes,
         dev::Service,
         http::StatusCode,
-        test::{init_service, TestRequest},
+        test::{call_and_read_body_json, init_service, TestRequest},
         App,
     };
-    use serde::Serialize;
     use serde_json::json;
 
-    use super::{super::trait_imp::BodyTest, init_routes};
-
-    #[derive(Debug, Serialize)]
-    pub struct BwResp {
-        result: f32,
-    }
+    use super::{init_routes, Resp};
 
     #[actix_web::test]
     async fn test_get() {
@@ -82,9 +76,7 @@ mod tests {
             "bitrate": 64
         });
 
-        let resp_expected = json!({
-            "result": 15625.0
-        });
+        let resp_expected = Resp { result: 15625.0 };
 
         let app = init_service(App::new().configure(init_routes)).await;
 
@@ -92,12 +84,8 @@ mod tests {
             .uri("/bwserver")
             .set_json(&req_body)
             .to_request();
-        let resp = app.call(req).await.unwrap();
-
-        assert_eq!(
-            to_bytes(resp.into_body()).await.unwrap().as_str(),
-            resp_expected.to_string()
-        );
+        let resp: Resp = call_and_read_body_json(&app, req).await;
+        assert_eq!(resp.result, resp_expected.result);
     }
 
     #[actix_web::test]
