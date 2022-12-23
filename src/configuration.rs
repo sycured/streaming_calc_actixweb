@@ -25,7 +25,7 @@ pub async fn app_port() -> String {
 
 pub fn cors() -> Cors {
     Cors::default()
-            .allowed_origin("https://schy.sycured.com")
-            .allowed_methods(vec!["GET", "POST"])
-            .max_age(3600)
+        .allowed_origin("https://schy.sycured.com")
+        .allowed_methods(vec!["GET", "POST"])
+        .max_age(3600)
 }
