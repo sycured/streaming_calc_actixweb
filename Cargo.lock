@@ -84,7 +84,7 @@ dependencies = [
 [[package]]
 name = "actix-request-identifier"
 version = "4.0.0"
-source = "git+https://github.com/sycured/actix-request-identifier?branch=main#226b098af7c00c698c87ac7bcdf9473b1f2bb81d"
+source = "git+https://github.com/sycured/actix-request-identifier?branch=main#c28cae5c16bfbe73870d2df3f6ce7ff7567f66b4"
 dependencies = [
  "actix-web",
  "futures",
