@@ -84,8 +84,7 @@ dependencies = [
 [[package]]
 name = "actix-multiresponse"
 version = "0.4.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "14746a6de310f0ca2f516daab968e01f97e9132e2b3ad7a969549296b17a02e4"
+source = "git+https://github.com/sycured/actix-multiresponse?branch=main#d6c77c68e5d0c690d08547889e85f1de53843d03"
 dependencies = [
  "actix-web",
  "cfg-if",
