@@ -9,7 +9,7 @@ repository = "https://github.com/sycured/streaming_calc_actixweb"
 
 [dependencies]
 actix-cors = "0.6.4"
-actix-request-identifier = { git = "https://github.com/sycured/actix-request-identifier", branch = "main" }
+actix-request-identifier = "4.1.0"
 actix-web = "4.2.1"
 env_logger = "0.10.0"
 log = "0.4.17"
