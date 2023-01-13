@@ -1,24 +1,25 @@
-use actix_web::{
-    web::{post, resource, Json, ServiceConfig},
-    Responder, Result,
-};
+use actix_multiresponse::Payload;
+use actix_web::web::{post, resource, ServiceConfig};
+use prost_derive::Message;
 use serde::{Deserialize, Serialize};
-#[derive(Deserialize)]
+#[derive(Deserialize, Message, Clone)]
 pub struct BwPost {
+    #[prost(float, tag = "1")]
     nblisteners: f32,
+    #[prost(float, tag = "2")]
     bitrate: f32,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, Message)]
 pub struct Resp {
+    #[prost(float, tag = "1")]
     result: f32,
 }
 
-pub async fn compute(data: Json<BwPost>) -> Result<impl Responder> {
-    let resp = Resp {
+pub async fn compute(data: Payload<BwPost>) -> Payload<Resp> {
+    Payload(Resp {
         result: 125.0 * data.nblisteners * data.bitrate / 128.0,
-    };
-    Ok(Json(resp))
+    })
 }
 
 pub fn init_routes(cfg: &mut ServiceConfig) {
