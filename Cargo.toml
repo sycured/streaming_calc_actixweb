@@ -13,7 +13,7 @@ actix-multiresponse = { git = "https://github.com/sycured/actix-multiresponse", 
 actix-request-identifier = "4.1.0"
 actix-web = "4.3.1"
 env_logger = "0.10.0"
-log = "0.4.18"
+log = "0.4.19"
 prost = "0.11.9"
 prost-derive = "0.11.9"
 serde = { version = "1.0.164", features = ["derive"] }
