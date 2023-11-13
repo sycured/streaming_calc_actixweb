@@ -12,7 +12,7 @@ actix-cors = "0.6.4"
 actix-multiresponse = { git = "https://github.com/sycured/actix-multiresponse", branch = "main", features = ["json", "xml", "protobuf"] }
 actix-request-identifier = "4.1.0"
 actix-web = "4.4.0"
-env_logger = "0.10.0"
+env_logger = "0.10.1"
 log = "0.4.20"
 prost = "0.12.1"
 prost-derive = "0.12.1"
