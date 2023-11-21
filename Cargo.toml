@@ -16,7 +16,7 @@ env_logger = "0.10.1"
 log = "0.4.20"
 prost = "0.12.2"
 prost-derive = "0.12.1"
-serde = { version = "1.0.192", features = ["derive"] }
+serde = { version = "1.0.193", features = ["derive"] }
 serde_json = "1.0.108"
 
 [target.'cfg(not(target_env = "msvc"))'.dependencies]
